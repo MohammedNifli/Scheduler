@@ -4,7 +4,7 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-generator client {
+  generator client {
   provider = "prisma-client-js"
 }
 
@@ -17,7 +17,7 @@ model User {
   id          String        @id @default(uuid())
   clerkUsrId  String        @unique
   email       String        @unique
-  username    String
+  username    String        @unique
   name        String?
   imageurl    String?
   events      Event[]       @relation("userEvents")

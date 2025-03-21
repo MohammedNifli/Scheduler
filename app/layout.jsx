@@ -1,9 +1,13 @@
+
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import Header from "@/components/Header";
+import Header from "../components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
-import Footer from "@/components/Footer";
+import Footer from "../components/Footer";
+import CreateEventDrawer from "@/components/create-event";
+
 
 export const metadata = {
   title: "Schedulrr",
@@ -13,6 +17,10 @@ export const metadata = {
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
+  // const pathname=usePathname()
+  // const hiddenFooterRoutes=['/dashboard', '/events','meetings','/availability']
+  // const hideFooter = hiddenFooterRoutes.some((route) => pathname.startsWith(route));
+
   return (
     <ClerkProvider>
       <html lang="en">
@@ -24,7 +32,9 @@ export default function RootLayout({ children }) {
             {children}
           </main>
           {/* <Footer/> */}
-          <Footer/>
+           <Footer />
+           <CreateEventDrawer/>
+           
         </body>
       </html>
     </ClerkProvider>

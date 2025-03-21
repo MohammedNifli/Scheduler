@@ -15,6 +15,7 @@ import {
 
 import Image from "next/image";
 import { Calendar, Clock, LinkIcon } from "lucide-react";
+import { checkUser } from "@/lib/checkUser";
 
 const features = [
   {
@@ -50,7 +51,10 @@ const howItWorks = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+
+
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
     

@@ -10,7 +10,7 @@ import UserMenu from "./user-menu";
 import { useRouter } from "next/navigation";
 
 const Header = () => { // ✅ Remove "async"
-  const router = useRouter();
+  const router = useRouter(); 
 
   const handleOpenCreateEvent = () => {
     router.push("?create=true"); // ✅ Updates URL

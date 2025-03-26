@@ -1,5 +1,6 @@
 "use server";
 
+import { title } from "process";
 import { db } from "../lib/prisma";
 import { currentUser, clerkClient } from "@clerk/nextjs/server";
 
@@ -50,4 +51,39 @@ export async function updateUsername(username) {
         console.error("Error updating user in Clerk:", error);
         throw new Error("Failed to update username .");
     }
+}
+
+
+export  async function getUserByName(username){
+    const user=db.user.findUnique({
+        where:{username},
+        select:{
+            id:true,
+            name:true,
+            email:true,
+            imageurl:true,
+            events:{
+                where:{
+                    isPrivate:false
+                },
+                orderBy:{
+                    createdAt:"desc"
+                },
+                select:{
+                    id:true,
+                    title:true,
+                    description:true,
+                    duration:true,
+                    isPrivate:true,
+                    _count:{
+                        select:{bookings:true}
+                    }
+                }
+            }
+        }
+    })
+
+    console.log("userey kittiyo",user)
+
+return user;
 }

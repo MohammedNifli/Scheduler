@@ -64,9 +64,9 @@ model Availability {
   id        String            @id @default(uuid())
   userId    String            @unique
   user      User              @relation(fields: [userId], references: [id])
-  days      DayAvailability[]
   timeGap   Int
 
+  dayAvailabilities DayAvailability[] 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -74,10 +74,12 @@ model Availability {
 model DayAvailability {
   id             String        @id @default(uuid())
   availabilityId String
-  day           DayOfWeek
-  startTime     DateTime
-  endTime       DateTime
-  availability  Availability @relation(fields: [availabilityId], references: [id], onDelete: Cascade)
+  day            String
+  startTime      DateTime
+  endTime        DateTime
+  availability   Availability @relation(fields: [availabilityId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
 enum DayOfWeek {

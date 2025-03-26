@@ -49,7 +49,7 @@ export default function CreateEventDrawer() {
           />
       
           <DrawerFooter>
-            <Button>Submit</Button>
+          
             <DrawerClose asChild>
               <Button variant="outline" onClick={handleClose}>Cancel</Button>
             </DrawerClose>

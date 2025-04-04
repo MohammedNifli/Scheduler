@@ -26,7 +26,7 @@
 
 
     const UserPage = async ({ params }) => {
-    const { username } = params; // Extract the username from params
+    const { username } = await params; // Extract the username from params
 
     const user = await getUserByName(username);
     if (!user) {

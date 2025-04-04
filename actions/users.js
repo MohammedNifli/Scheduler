@@ -1,89 +1,72 @@
 "use server";
 
-import { title } from "process";
 import { db } from "../lib/prisma";
-import { currentUser, clerkClient } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function updateUsername(username) {
-    const userData = await currentUser();
-    if (!userData) {
-        throw new Error("Unauthorized: No user data found.");
-    }
-
-    const userId = userData.id;
-    if (!userId) {
-        throw new Error("Unauthorized: No user ID found.");
-    }
-
-    const existingUsername = await db.user.findUnique({
-        where: { username },
-    });
-
-    if (existingUsername && existingUsername.clerkUsrId !== userId) {
-        throw new Error("Username already taken.");
-    }
-
-    
-    const existingUser = await db.user.findUnique({
-        where: { clerkUsrId: userId },
-    });
-
-    if (!existingUser) {
-        throw new Error("User not found in database.");
-    }
-
+  // Get session using NextAuth.js
+  const session = await getServerSession(authOptions);
   
-    await db.user.update({
-        where: { clerkUsrId: userId },
-        data: { username },
-    });
+  if (!session?.user?.email) {
+    throw new Error("Unauthorized: No user session found.");
+  }
 
-    try {
-        
-        const updatedUser = await clerkClient.users.update(userId, {
-            username,
-        });
+  // Find user by email
+  const existingUser = await db.user.findUnique({
+    where: { email: session.user.email },
+  });
 
-        console.log("Clerk update response:", updatedUser);
+  if (!existingUser) {
+    throw new Error("User not found in database.");
+  }
 
-        return { success: true };
-    } catch (error) {
-        console.error("Error updating user in Clerk:", error);
-        throw new Error("Failed to update username .");
-    }
+  // Check if username is taken
+  const existingUsername = await db.user.findUnique({
+    where: { username },
+  });
+
+  if (existingUsername && existingUsername.id !== existingUser.id) {
+    throw new Error("Username already taken.");
+  }
+
+  // Update username
+  await db.user.update({
+    where: { id: existingUser.id },
+    data: { username },
+  });
+
+  return { success: true };
 }
 
-
-export  async function getUserByName(username){
-    const user=db.user.findUnique({
-        where:{username},
-        select:{
-            id:true,
-            name:true,
-            email:true,
-            imageurl:true,
-            events:{
-                where:{
-                    isPrivate:false
-                },
-                orderBy:{
-                    createdAt:"desc"
-                },
-                select:{
-                    id:true,
-                    title:true,
-                    description:true,
-                    duration:true,
-                    isPrivate:true,
-                    _count:{
-                        select:{bookings:true}
-                    }
-                }
+export async function getUserByName(username) {
+    const user = await db.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        imageurl: true,
+        events: {
+          where: {
+            isPrivate: false
+          },
+          orderBy: {
+            createdAt: "desc"
+          },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            duration: true,
+            isPrivate: true,
+            _count: {
+              select: { bookings: true }
             }
+          }
         }
-    })
-
-    console.log("userey kittiyo",user)
-
-return user;
-}
+      }
+    });
+  
+    return user;
+  }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import { BarLoader } from "react-spinners";
@@ -15,10 +15,10 @@ const navItems = [
 ];
 
 const AppLayout = ({ children }) => {
-  const { isLoaded } = useUser();
+  const { status } = useSession();
   const pathname = usePathname();
 
-  if (!isLoaded) {
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center h-screen">
         <BarLoader width="60%" color="#36d7b7" />

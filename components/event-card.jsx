@@ -16,6 +16,8 @@ import { deleteEvent } from "@/actions/events";
 import useFetch from "@/hooks/use-fetch";
 
 const EventCard = ({ event, username, isPublic = false }) => {
+
+  console.log("userrrrrna,r",username)
   const [copied, setCopied] = useState(false);
   const router = useRouter(); // ✅ Initialize useRouter
 

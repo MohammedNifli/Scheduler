@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { CardTitle, Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,8 @@ import { updateUsername } from "@/actions/users";
 import { BarLoader } from "react-spinners";
 
 const Dashboard = () => {
-  const { isLoaded, user } = useUser();
+  const { data: session, status } = useSession();
+  const user = session?.user;
   console.log("user", user);
 
   const [origin, setOrigin] = useState("");
@@ -28,10 +29,10 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    if (isLoaded && user?.firstName) {
-      setValue("username", user?.firstName);
+    if (status === "authenticated" && user?.name) {
+      setValue("username", user?.name);
     }
-  }, [isLoaded, user, setValue]);
+  }, [status, user, setValue]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -51,10 +52,18 @@ const Dashboard = () => {
     fnUpdateUsername(data.username);
   };
 
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "unauthenticated") {
+    return <div>Please sign in to access this page</div>;
+  }
+
   return (
     <div className="space-y-8">
       <Card>
-        <CardTitle>Welcome, {user?.firstName}</CardTitle>
+        <CardTitle>Welcome, {user?.name}</CardTitle>
       </Card>
 
       <Card>

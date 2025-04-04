@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
   generator client {
   provider = "prisma-client-js"
@@ -14,18 +10,22 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(uuid())
-  clerkUsrId  String        @unique
-  email       String        @unique
-  username    String        @unique
-  name        String?
-  imageurl    String?
-  events      Event[]       @relation("userEvents")
-  bookings    Booking[]     @relation("userBookings")
-  availability Availability?
+  id                String        @id @default(uuid())
+  email             String        @unique
+  username          String?       @unique
+  name              String?
+  imageurl          String?
+  provider          String?       
+  providerId        String?       
+  oauthAccessToken  String?
+  oauthRefreshToken String?
+  oauthTokenExpiry  DateTime?
+  events            Event[]       @relation("userEvents")
+  bookings          Booking[]     @relation("userBookings")
+  availability      Availability?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 }
 
 model Event {
@@ -53,8 +53,12 @@ model Booking {
   additionalInfo String?
   startTime     DateTime
   endTime       DateTime
-  meetLink      String
-  googleEventId String
+  meetLink      String?
+  googleEventId String?
+  googleCalendarLink String?
+  googleSyncFailed Boolean @default(false)
+  notificationSent Boolean @default(false)
+                                          
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

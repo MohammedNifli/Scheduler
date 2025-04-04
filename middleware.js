@@ -1,26 +1,29 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
-  "/events(.*)",
-  "/meetings(.*)",
-  "/availability(.*)",
-]);
-
-export default  clerkMiddleware ( async(auth, req) => {
-
-  const { userId } = await auth(); 
-
-  console.log("Auth Data:", { userId });
-
-  if (!userId && isProtectedRoute(req)) {
-    return await  auth.protect(); 
+export default withAuth(
+  function middleware(req) {
+    console.log("Middleware running for:", req.nextUrl.pathname);
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => {
+        return Boolean(token); // Ensures a valid session token exists
+      },
+    },
+    pages: {
+      signIn: "/auth/signin",
+      error: "/auth/error",
+    },
   }
-});
+);
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
+    "/dashboard/:path*",
+    "/events/:path*",
+    "/meetings/:path*",
+    "/availability/:path*",
   ],
 };

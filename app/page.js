@@ -1,3 +1,7 @@
+
+
+
+
 import {Button} from "@/components/ui/button";
 import {
   Card,
@@ -52,6 +56,7 @@ const howItWorks = [
 ];
 
 export default async function Home() {
+  await checkUser()
 
 
 
@@ -159,3 +164,4 @@ export default async function Home() {
     </main>
   );
 }
+

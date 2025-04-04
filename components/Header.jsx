@@ -1,19 +1,19 @@
-"use client"; // ✅ Mark it as a client component
+"use client";
 
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { PenBox, Menu } from "lucide-react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import UserMenu from "./user-menu";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const Header = () => { // ✅ Remove "async"
-  const router = useRouter(); 
+const Header = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   const handleOpenCreateEvent = () => {
-    router.push("?create=true"); // ✅ Updates URL
+    router.push("?create=true");
   };
 
   return (
@@ -29,7 +29,7 @@ const Header = () => { // ✅ Remove "async"
           />
         </Link>
 
-        {/* Mobile menu button - shown on small screens */}
+        {/* Mobile menu button */}
         <div className="md:hidden">
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu size={24} />
@@ -52,21 +52,37 @@ const Header = () => { // ✅ Remove "async"
         <div className="flex items-center gap-4">
           <Button
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm hidden md:flex cursor-crosshair"
-            onClick={handleOpenCreateEvent} // ✅ No Link, we use router.push()
+            onClick={handleOpenCreateEvent}
           >
             <PenBox size={18} />
             Create Event
           </Button>
-          <SignedOut>
-            <SignInButton forceRedirectUrl="/dashboard">
-              <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
-                Login
+
+          {status === "authenticated" ? (
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                onClick={() => signOut({ callbackUrl: "/" })}
+              >
+                Sign Out
               </Button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <UserMenu />
-          </SignedIn>
+              {/* Replace with your UserMenu if needed */}
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <span className="text-blue-600 font-medium">
+                  {session.user?.name?.charAt(0)}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <Button
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-50"
+              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            >
+              Login
+            </Button>
+          )}
         </div>
       </div>
     </nav>

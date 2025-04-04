@@ -26,6 +26,8 @@ export default async function EventsPage() {
 
 const Events = async() => {
   const { events, username } = await getAllUserEvents();
+
+  console.log("username is getting in eventPage",username)
   
   if (events.length === 0) {
     return (

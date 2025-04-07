@@ -74,13 +74,13 @@ export async function createBookings(bookingData) {
         });
         meetLink = eventResponse.data.hangoutLink;
 
-        // Update booking with Google Meet link
+        
         await db.booking.update({
           where: { id: booking.id },
           data: { meetLink },
         });
 
-        // Generate iCal invite
+       
         icsContent = await generateICal(
           event.title,
           bookingData.additionalInfo || '',
@@ -95,7 +95,6 @@ export async function createBookings(bookingData) {
       }
     }
 
-    // 6. Send emails
     const emailResults = {
       guest: await sendBookingEmail(
         bookingData.email,
@@ -129,4 +128,52 @@ export async function createBookings(bookingData) {
     console.error("Booking failed:", error);
     return { success: false, error: error.message };
   }
+}
+
+
+export async function dashboardDatas() {
+ 
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    throw new Error("Unauthorized: Please sign in to view dashboard.");
+  }
+
+  const now = new Date();
+
+  
+  const bookings = await db.booking.findMany({
+    where: {
+      userId: session.user.id 
+    },
+    select: {
+      id: true,
+      startTime: true,
+      status: true 
+    }
+  });
+ 
+
+  
+  const totalBookings = bookings.length;
+  
+  const upcomingBookings = bookings.filter(booking => 
+    new Date(booking.startTime) > now
+  ).length;
+
+  const pastBookings = bookings.filter(booking => 
+    new Date(booking.startTime) <= now
+  ).length;
+
+  const cancelledBookings = bookings.filter(booking => 
+    booking.status === 'cancelled'
+  ).length;
+
+ 
+  return {
+    totalBookings,
+    upcomingBookings,
+    pastBookings,
+    cancelledBookings
+  };
 }

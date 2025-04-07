@@ -18,7 +18,7 @@ export async function CreateEvent(data) {
     // 2. Data Validation
     const validatedData = eventSchema.parse(data);
 
-    console.log("validated Dataaaaaaaaaaaaaaaaa", validatedData);
+ 
 
     // 3. Verify User Exists
     const user = await db.user.findUnique({
@@ -169,7 +169,7 @@ export async function getEventAvailability(eventId) {
     });
 
     if (!event?.user?.availability?.dayAvailabilities) {
-      console.log("No day availabilities found");
+      // console.log("No day availabilities found");
       return [];
     }
 
@@ -180,8 +180,8 @@ export async function getEventAvailability(eventId) {
     const startDate = startOfDay(new Date());
     const endDate = addDays(startDate, 30);
 
-    console.log("Day availabilities:", JSON.stringify(dayAvailabilities, null, 2));
-    console.log("Bookings count:", bookings.length);
+    // console.log("Day availabilities:", JSON.stringify(dayAvailabilities, null, 2));
+    // console.log("Bookings count:", bookings.length);
 
     const availableDates = [];
 
@@ -193,18 +193,18 @@ export async function getEventAvailability(eventId) {
       }).toLowerCase();
       
       const dateStr = format(currentDate, "yyyy-MM-dd");
-      console.log(`Checking ${dateStr} (${dayOfWeek})`);
+      // console.log(`Checking ${dateStr} (${dayOfWeek})`);
 
       const dayAvailability = dayAvailabilities.find(
         (da) => da.day.toLowerCase() === dayOfWeek
       );
 
       if (!dayAvailability) {
-        console.log(`No availability for ${dayOfWeek}`);
+        // console.log(`No availability for ${dayOfWeek}`);
         continue;
       }
 
-      console.log(`Found availability for ${dayOfWeek}:`, dayAvailability);
+      // console.log(`Found availability for ${dayOfWeek}:`, dayAvailability);
       
       // Filter bookings for this specific date (UTC comparison)
       const dateBookings = bookings.filter(booking => {
@@ -212,7 +212,7 @@ export async function getEventAvailability(eventId) {
         return bookingDate === dateStr;
       });
 
-      console.log(`Found ${dateBookings.length} bookings for ${dateStr}`);
+      // console.log(`Found ${dateBookings.length} bookings for ${dateStr}`);
 
       const slots = await generateAllAvailableTimeSlots(
         dayAvailability.startTime,
@@ -223,7 +223,7 @@ export async function getEventAvailability(eventId) {
         timeGap
       );
 
-      console.log(`Generated ${slots.length} slots for ${dateStr}`);
+      // console.log(`Generated ${slots.length} slots for ${dateStr}`);
 
       if (slots.length > 0) {
         availableDates.push({ 
@@ -234,7 +234,7 @@ export async function getEventAvailability(eventId) {
       }
     }
 
-    console.log("Final available dates:", JSON.stringify(availableDates, null, 2));
+    // console.log("Final available dates:", JSON.stringify(availableDates, null, 2));
     return availableDates;
   } catch (error) {
     console.error("Error in getEventAvailability:", error);
@@ -252,7 +252,7 @@ export async function generateAllAvailableTimeSlots(
 ) {
 
 
-  console.log("dddddddddddddddddddddddddddddddddd",startTime,endTime,duration,bookings,dateStr,timeGap)
+  
   const slots = [];
 
   if (!startTime || !endTime) {

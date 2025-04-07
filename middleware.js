@@ -3,13 +3,18 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
   function middleware(req) {
-    console.log("Middleware running for:", req.nextUrl.pathname);
+    // Redirect authenticated users trying to access auth pages
+    if (req.nextUrl.pathname.startsWith('/auth') && req.nextauth.token) {
+      return NextResponse.redirect(new URL('/', req.nextUrl.origin));
+    }
+    
+    // Allow access to protected routes
     return NextResponse.next();
   },
   {
     callbacks: {
       authorized: ({ token }) => {
-        return Boolean(token); // Ensures a valid session token exists
+        return Boolean(token);
       },
     },
     pages: {
@@ -25,5 +30,6 @@ export const config = {
     "/events/:path*",
     "/meetings/:path*",
     "/availability/:path*",
+    "/auth/:path*" 
   ],
 };

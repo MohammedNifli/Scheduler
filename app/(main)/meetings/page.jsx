@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 import React, { Suspense } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserMeetings } from '../../../actions/meetings';

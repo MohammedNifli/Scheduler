@@ -10,7 +10,7 @@ import { Calendar, Clock, Check, UserCircle, Mail, FileText } from "lucide-react
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
-import { se } from "date-fns/locale";
+
 import useFetch from "@/hooks/use-fetch";
 import { createBookings } from "@/actions/bookings";
 

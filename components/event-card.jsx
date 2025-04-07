@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { deleteEvent } from "@/actions/events";
 import useFetch from "@/hooks/use-fetch";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 const EventCard = ({ event, username, isPublic = false }) => {
   const [copied, setCopied] = useState(false);
@@ -25,6 +26,7 @@ const EventCard = ({ event, username, isPublic = false }) => {
     const eventUrl = `${window.location.origin}/${username}/events/${event.id}`;
     navigator.clipboard.writeText(eventUrl);
     setCopied(true);
+    toast.success('linke copied')
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -35,6 +37,7 @@ const EventCard = ({ event, username, isPublic = false }) => {
     if (window?.confirm("Are you sure you want to delete this event?")) {
       try {
         await fnDeleteEvent(event.id);
+        toast.success("event deleted succesfully")
         router.refresh();
       } catch (error) {
         console.error("Failed to delete event:", error);

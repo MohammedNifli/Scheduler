@@ -52,7 +52,7 @@ const howItWorks = [
 ];
 
 export default async function Home() {
-  await checkUser()
+    await checkUser()
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-50/50 to-white">

@@ -24,7 +24,8 @@ export async function createBookings(bookingData) {
     const startTime = new Date(bookingData.startTime);
     const endTime = new Date(bookingData.endTime);
     if (isNaN(startTime.getTime())) throw new Error("Invalid start time");
-    if (startTime >= endTime) throw new Error("End time must be after start time");
+    if (startTime >= endTime)
+      throw new Error("End time must be after start time");
 
     // 4. Create booking
     const booking = await db.booking.create({
@@ -35,7 +36,7 @@ export async function createBookings(bookingData) {
         email: bookingData.email,
         startTime,
         endTime,
-        additionalInfo: bookingData.additionalInfo || '',
+        additionalInfo: bookingData.additionalInfo || "",
       },
     });
 
@@ -58,35 +59,45 @@ export async function createBookings(bookingData) {
         const calendar = google.calendar({ version: "v3", auth: oauth2Client });
         const eventResponse = await calendar.events.insert({
           calendarId: "primary",
-          conferenceDataVersion: 1,
+          conferenceDataVersion: 1, // This is correct
           requestBody: {
             summary: `${event.title} with ${bookingData.name}`,
-            start: { dateTime: startTime.toISOString(), timeZone: 'UTC' },
-            end: { dateTime: endTime.toISOString(), timeZone: 'UTC' },
+            description: bookingData.additionalInfo || "",
+            location: "Google Meet",
+            start: { dateTime: startTime.toISOString(), timeZone: "UTC" },
+            end: { dateTime: endTime.toISOString(), timeZone: "UTC" },
             attendees: [
               { email: bookingData.email, displayName: bookingData.name },
-              { email: event.user.email, displayName: event.user.name || 'Host' },
+              {
+                email: event.user.email,
+                displayName: event.user.name || "Host",
+              },
             ],
             conferenceData: {
-              createRequest: { conferenceSolutionKey: { type: "hangoutsMeet" } },
+              createRequest: {
+                requestId: booking.id, 
+                conferenceSolutionKey: { type: "hangoutsMeet" },
+              },
             },
           },
         });
-        meetLink = eventResponse.data.hangoutLink;
 
-        
+        const meetLink =
+          eventResponse.data?.conferenceData?.entryPoints?.[0]?.uri ||
+          eventResponse.data?.hangoutLink ||
+          null;
+
         await db.booking.update({
           where: { id: booking.id },
           data: { meetLink },
         });
 
-       
         icsContent = await generateICal(
           event.title,
-          bookingData.additionalInfo || '',
+          bookingData.additionalInfo || "",
           startTime,
           endTime,
-          { name: event.user.name || 'Host', email: event.user.email },
+          { name: event.user.name || "Host", email: event.user.email },
           [{ name: bookingData.name, email: bookingData.email }],
           meetLink
         );
@@ -102,7 +113,7 @@ export async function createBookings(bookingData) {
         event.title,
         startTime,
         endTime,
-        event.user.name || 'Host',
+        event.user.name || "Host",
         meetLink,
         bookingData.additionalInfo,
         icsContent
@@ -130,9 +141,7 @@ export async function createBookings(bookingData) {
   }
 }
 
-
 export async function dashboardDatas() {
- 
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
@@ -141,39 +150,36 @@ export async function dashboardDatas() {
 
   const now = new Date();
 
-  
   const bookings = await db.booking.findMany({
     where: {
-      userId: session.user.id 
+      userId: session.user.id,
     },
     select: {
       id: true,
       startTime: true,
-      status: true 
-    }
+      status: true,
+    },
   });
- 
 
-  
   const totalBookings = bookings.length;
+
+  const upcomingBookings = bookings.filter(
+    (booking) =>
+      new Date(booking.startTime) > now && booking.status !== "CANCELLED"
+  ).length;
   
-  const upcomingBookings = bookings.filter(booking => 
-    new Date(booking.startTime) > now
+  const pastBookings = bookings.filter(
+    (booking) => new Date(booking.startTime) <= now
   ).length;
 
-  const pastBookings = bookings.filter(booking => 
-    new Date(booking.startTime) <= now
+  const cancelledBookings = bookings.filter(
+    (booking) => booking.status === "CANCELLED"
   ).length;
 
-  const cancelledBookings = bookings.filter(booking => 
-    booking.status === 'cancelled'
-  ).length;
-
- 
   return {
     totalBookings,
     upcomingBookings,
     pastBookings,
-    cancelledBookings
+    cancelledBookings,
   };
 }

@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { updateAvailability } from "@/actions/availability";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Clock, CalendarDays } from "lucide-react";
+import { toast } from 'sonner';
+
 
 const AvailabilityForm = ({ initialData }) => {
   if (!initialData) return (
@@ -45,6 +47,7 @@ const AvailabilityForm = ({ initialData }) => {
     try {
       const result = await updateAvailability(data);
       console.log("Availability update result:", result);
+      toast.success("Availability added successfully!")
     } catch (error) {
       console.error("Error updating availability:", error);
     }

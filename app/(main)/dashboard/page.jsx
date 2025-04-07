@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usernameSchema } from "@/lib/validators";
 import useFetch from "@/hooks/use-fetch";
-import { updateUsername } from "@/actions/users";
+import { getCurrentUsername, updateUsername } from "@/actions/users";
 import { BarLoader } from "react-spinners";
 import {
   LineChart,
@@ -35,6 +35,7 @@ import {
   Cell,
 } from "recharts";
 import {
+  Loader2,
   Calendar,
   Clock,
   CheckCircle,
@@ -47,14 +48,17 @@ import {
   Clock3,
   Star,
   TrendingUp,
+  AlertCircle,
 } from "lucide-react";
 import { dashboardDatas } from "@/actions/bookings";
 import { getgraphDatas } from "@/actions/meetings";
+import { Toaster, toast } from 'sonner'
+
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
   const user = session?.user;
-
+  const [currentUsername, setCurrentUsername] = useState("");
   const [origin, setOrigin] = useState("");
   const [bookingData, setBookingData] = useState();
   const [graphData, setGraphData] = useState({
@@ -74,11 +78,24 @@ const Dashboard = () => {
     resolver: zodResolver(usernameSchema),
   });
 
+ 
+
   useEffect(() => {
-    if (status === "authenticated" && user?.name) {
-      setValue("username", user?.name);
-    }
-  }, [status, user, setValue]);
+    const fetchUsername = async () => {
+      try {
+        const username = await getCurrentUsername();
+        if (username) {
+          setCurrentUsername(username);
+          setValue("username", username);
+        }
+      } catch (error) {
+        console.error("Error fetching username:", error);
+      } finally {
+      }
+    };
+
+    fetchUsername();
+  }, [setValue]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -130,6 +147,7 @@ const Dashboard = () => {
   const onSubmit = async (data) => {
     console.log("Updated username:", data.username);
     fnUpdateUsername(data.username);
+    toast.success("Username updated successfully!");
   };
 
   if (status === "loading") {
@@ -385,7 +403,11 @@ const Dashboard = () => {
               )}
 
               {error && (
-                <p className="text-red-500 text-sm mt-1">{error.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {typeof error === "string"
+                    ? error
+                    : error.message || "Something went wrong"}
+                </p>
               )}
             </div>
             {loading && (
@@ -400,8 +422,6 @@ const Dashboard = () => {
           </form>
         </CardContent>
       </Card>
-
-      {/* Recent Performance Summary Card */}
     </div>
   );
 };

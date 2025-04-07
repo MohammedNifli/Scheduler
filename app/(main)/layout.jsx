@@ -6,6 +6,8 @@ import React from "react";
 import { BarLoader } from "react-spinners";
 import { BarChart, Calendar, Users, Clock } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { Toaster, toast } from 'sonner'
+
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart },
@@ -83,6 +85,9 @@ const AppLayout = ({ children }) => {
         </header>
         <div className="flex-1 overflow-auto p-6">
           {children}
+          <Toaster position="top-center" richColors />
+
+
         </div>
       </main>
 

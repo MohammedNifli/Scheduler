@@ -1,6 +1,4 @@
 "use client"
-
-import React from 'react';
 import Link from 'next/link';
 
 const NotFound = () => {
@@ -27,29 +25,30 @@ const NotFound = () => {
           <Link href="/" className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             Return Home
           </Link>
-          <button onClick={() => window.history.back()} className="px-6 py-3 bg-white text-gray-800 font-medium rounded-lg shadow-md border border-gray-200 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2">
+          <Link href="#" onClick={() => window.history.back()} className="px-6 py-3 bg-white text-gray-800 font-medium rounded-lg shadow-md border border-gray-200 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2">
             Go Back
-          </button>
+          </Link>
         </div>
         
         {/* Search Suggestion */}
         <div className="mt-10 pt-6 border-t border-gray-200">
           <p className="text-sm text-gray-500 mb-4">Looking for something specific?</p>
-          <div className="flex">
+          <form action="/search" className="flex">
             <input 
               type="text" 
+              name="q"
               placeholder="Search..." 
               className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition-colors">
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition-colors">
               Search
             </button>
-          </div>
+          </form>
         </div>
         
         {/* Footer */}
         <div className="mt-12 text-sm text-gray-500">
-          <p>Need assistance? <a href="/contact" className="text-blue-600 hover:underline">Contact Support</a></p>
+          <p>Need assistance? <Link href="/contact" className="text-blue-600 hover:underline">Contact Support</Link></p>
         </div>
       </div>
     </div>
@@ -57,5 +56,3 @@ const NotFound = () => {
 };
 
 export default NotFound;
-
-

@@ -14,8 +14,9 @@ import {
 import { useSearchParams, useRouter } from "next/navigation";
 import EventForm from "./event-form";
 import { Toaster } from "sonner";
+import { Suspense } from "react";
 
-export default function CreateEventDrawer() {
+function CreateEventDrawerContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -77,5 +78,13 @@ export default function CreateEventDrawer() {
         </DrawerContent>
       </Drawer>
     </>
+  );
+}
+
+export default function CreateEventDrawer() {
+  return (
+    <Suspense fallback={null}>
+      <CreateEventDrawerContent />
+    </Suspense>
   );
 }

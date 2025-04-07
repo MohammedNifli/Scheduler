@@ -1,4 +1,5 @@
-import React, { Suspense } from 'react';
+
+import React, { Suspense, use } from 'react';
 import { getAllUserEvents } from '../../../actions/events';
 import EventCard from '../../../components/event-card';
 import { Loader2, Calendar, Filter, Plus } from 'lucide-react';
@@ -6,14 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from 'next/link';
 
+
 export default async function EventsPage() {
+  
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
       <header className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">My Events</h1>
-          <p className="text-gray-500 mt-1">Manage your upcoming and past events</p>
+          <p className="text-gray-500 mt-1">Manage your upcoming and past events and book your events</p>
         </div>
+       
         
        
       </header>
@@ -25,6 +29,7 @@ export default async function EventsPage() {
               <Loader2 size={36} className="text-blue-600 animate-spin mx-auto mb-4" />
               <span className="text-gray-600 font-medium block">Loading your events...</span>
             </div>
+          
           </div>
         }
       >

@@ -57,7 +57,7 @@ const Header = () => {
           {/* Desktop Create Event button and auth */}
           <div className="hidden md:flex items-center gap-4">
             <Button
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-crosshair"
               onClick={handleOpenCreateEvent}
             >
               <PenBox size={18} />

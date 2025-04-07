@@ -224,10 +224,10 @@ const AvailabilityForm = ({ initialData }) => {
             </div>
           </div>
 
-          <CardFooter className="px-0 pb-0 pt-6 flex justify-center sm:justify-end">
+          <CardFooter className="px-0 pb-0  pt-6 flex justify-center sm:justify-end">
             <Button 
               type="submit" 
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto bg-blue-600"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Saving..." : "Update Availability"}

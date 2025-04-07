@@ -13,17 +13,14 @@ import {
 } from "@/components/ui/drawer";
 import { useSearchParams, useRouter } from "next/navigation";
 import EventForm from "./event-form";
+import { Toaster } from "sonner";
 
 export default function CreateEventDrawer() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
   
   const isCreateMode = searchParams.get("create") === "true";
-
-
   const [isOpen, setIsOpen] = React.useState(isCreateMode);
-
   
   React.useEffect(() => {
     setIsOpen(isCreateMode);
@@ -31,31 +28,54 @@ export default function CreateEventDrawer() {
 
   const handleClose = () => {
     setIsOpen(false);
-    router.replace(window.location.pathname); // ✅ Removes `create=true`
+    router.replace(window.location.pathname); // Removes `create=true`
   };
 
   return (
-    <Drawer open={isOpen} onClose={handleClose}>
-      <DrawerContent>
-   
+    <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10B981',
+              secondary: 'white',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#EF4444',
+              secondary: 'white',
+            },
+          },
+        }}
+      />
+      
+      <Drawer open={isOpen} onClose={handleClose}>
+        <DrawerContent className="max-w-md mx-auto">
           <DrawerHeader>
-            <DrawerTitle>Create New Event</DrawerTitle>
-           
+            <DrawerTitle className="text-xl font-bold">Create New Event</DrawerTitle>
+            <DrawerDescription>
+              Fill out the form below to create a new event
+            </DrawerDescription>
           </DrawerHeader>
+          
           <EventForm 
-          onSubmiForm={()=>{
-            handleClose();
-          }}
+            onSubmitForm={handleClose}
           />
       
-          <DrawerFooter>
-          
+          <DrawerFooter className="pt-2">
             <DrawerClose asChild>
               <Button variant="outline" onClick={handleClose}>Cancel</Button>
             </DrawerClose>
           </DrawerFooter>
-     
-      </DrawerContent>
-    </Drawer>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 }

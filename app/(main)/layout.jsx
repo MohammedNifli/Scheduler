@@ -35,7 +35,7 @@ const AppLayout = ({ children }) => {
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className="hidden w-64 flex-shrink-0 border-r border-gray-200 bg-white md:flex md:flex-col">
         <div className="flex h-16 items-center justify-center border-b border-gray-200">
-          <h1 className="text-xl font-bold text-blue-600">MyApp</h1>
+          <h1 className="text-xl font-bold text-blue-600">Manage</h1>
         </div>
         <nav className="flex flex-1 flex-col p-4">
           <ul className="space-y-2">
@@ -78,9 +78,9 @@ const AppLayout = ({ children }) => {
                 <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
               </svg>
             </button>
-            <div className="h-8 w-8 rounded-full bg-blue-500 text-center text-white flex items-center justify-center">
+            {/* <div className="h-8 w-8 rounded-full bg-blue-500 text-center text-white flex items-center justify-center">
               <span className="text-sm font-medium">JD</span>
-            </div>
+            </div> */}
           </div>
         </header>
         <div className="flex-1 overflow-auto p-6">

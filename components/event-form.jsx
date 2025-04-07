@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea"; 
 import {
   Select,
   SelectContent,
@@ -15,16 +16,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { CreateEvent } from "@/actions/events";
 import useFetch from "@/hooks/use-fetch";
+import { toast } from "sonner";
 
 const EventForm = ({ onSubmitForm }) => {
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    reset
   } = useForm({
     resolver: zodResolver(eventSchema),
     defaultValues: {
+      title: "",
+      description: "",
       duration: 30,
       isPrivate: true,
     },
@@ -32,10 +37,15 @@ const EventForm = ({ onSubmitForm }) => {
 
   const { loading, error, data, fn: fnCreateEvent } = useFetch(CreateEvent);
 
-  const onSubmit = async (data) => {
-    await fnCreateEvent(data);
-    if (!loading && !error) {
-      onSubmitForm();
+  const onSubmit = async (formData) => {
+    try {
+      await fnCreateEvent(formData);
+      
+      toast.success("Event created successfully!");
+      reset();
+      if (onSubmitForm) onSubmitForm();
+    } catch (err) {
+      toast.error(err?.message || "Failed to create event");
     }
   };
 
@@ -45,7 +55,12 @@ const EventForm = ({ onSubmitForm }) => {
         <label htmlFor="title" className="block text-sm font-medium text-gray-700">
           Event Title
         </label>
-        <Input id="title" {...register("title")} className="mt-1" />
+        <Input 
+          id="title" 
+          {...register("title")} 
+          className="mt-1" 
+          placeholder="Enter event title"
+        />
         {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
       </div>
 
@@ -53,7 +68,12 @@ const EventForm = ({ onSubmitForm }) => {
         <label htmlFor="description" className="block text-sm font-medium text-gray-700">
           Event Description
         </label>
-        <Input id="description" {...register("description")} className="mt-1" />
+        <Textarea 
+          id="description" 
+          {...register("description")} 
+          className="mt-1 min-h-24" 
+          placeholder="Enter event description"
+        />
         {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
       </div>
 
@@ -61,7 +81,14 @@ const EventForm = ({ onSubmitForm }) => {
         <label htmlFor="duration" className="block text-sm font-medium text-gray-700">
           Duration (minutes)
         </label>
-        <Input id="duration" {...register("duration", { valueAsNumber: true })} className="mt-1" />
+        <Input 
+          id="duration" 
+          type="number"
+          {...register("duration", { valueAsNumber: true })} 
+          className="mt-1" 
+          min={15}
+          max={240}
+        />
         {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration.message}</p>}
       </div>
 
@@ -70,31 +97,38 @@ const EventForm = ({ onSubmitForm }) => {
           Event Privacy
         </label>
         <Controller
-  name="isPrivate"
-  control={control}
-  render={({ field: { onChange, value, ...rest } }) => (
-    <Select
-      {...rest}
-      value={value ? "true" : "false"}
-      onValueChange={(selectedValue) => onChange(selectedValue === "true")}
-    >
-      <SelectTrigger className="mt-1">
-        <SelectValue placeholder="Select Privacy" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="true">Private</SelectItem>
-        <SelectItem value="false">Public</SelectItem>
-      </SelectContent>
-    </Select>
-  )}
-/>
-
+          name="isPrivate"
+          control={control}
+          render={({ field: { onChange, value, ...rest } }) => (
+            <Select
+              {...rest}
+              value={value ? "true" : "false"}
+              onValueChange={(selectedValue) => onChange(selectedValue === "true")}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select Privacy" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="true">Private</SelectItem>
+                <SelectItem value="false">Public</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.isPrivate && <p className="text-red-500 text-sm mt-1">{errors.isPrivate.message}</p>}
       </div>
 
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? "Submitting..." : "Create Event"}
+      <Button 
+        type="submit" 
+        disabled={isSubmitting || loading} 
+        className="w-full bg-blue-600 hover:bg-blue-700"
+      >
+        {loading ? "Creating..." : "Create Event"}
       </Button>
+      
+      {error && (
+        <p className="text-red-500 text-sm text-center">{error.message || "An error occurred"}</p>
+      )}
     </form>
   );
 };

@@ -72,7 +72,7 @@ const EventCard = ({ event, username, isPublic = false }) => {
 
   return (
     <Card 
-      className="w-full h-full flex flex-col justify-between shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden" 
+      className="w-full h-full flex flex-col justify-between shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden cursor-pointer" 
       onClick={handleCardClick}
     >
       <div className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2" />
